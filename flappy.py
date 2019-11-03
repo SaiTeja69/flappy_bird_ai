@@ -139,7 +139,7 @@ def window(win,bird,pipes,base,score):
 	#bird.move()
 	pygame.display.update()
 
-def main():
+def main(genomes,config):
 	bird=Bird(230,350)
 	base=Base(730)
 	pipes=[Pipe(600)]
@@ -179,11 +179,23 @@ def main():
 		if bird.y+bird.img.get_height()>=730:
 			pass
 
-			window(win,bird,pipes,base,score)
+		window(win,bird,pipes,base,score)
 	pygame.quit()
 	quit()
 
 main()
+def run():
+	config=neat.config.Config(neat.DefaultGenome, neat.DefaultProduction,neat.DefaultSpeciesSet,neat.DefaultStagnation,config_file)
+	p=neat.Population(config)
 
+	p.add_reporter(neat.StdOutReporter(True))
+	stats=neat.StatisticsReporter()
+	p.add_reporter(stats)
+	winner=p.run(main,50)
+
+if __name__ == '__main__':
+	local_dir=os.path.dirname(__file__)
+	config_path=os.path.join(local_dir,"config_feedforward.txt")
+	run(config_path)
 
 
