@@ -139,49 +139,85 @@ def window(win,bird,pipes,base,score):
     #bird.move()
     pygame.display.update()
 
-def main():
-    bird=Bird(230,350)
-    base=Base(730)
-    pipes=[Pipe(600)]
-    score=0
-
-    win=pygame.display.set_mode((WIDTH,HEIGHT))
-    clk=pygame.time.Clock()
-    run=True
+def end_screen(win):
+    run = True
+    text_label = STAT_FONT.render("Press Space to Restart", 1, (255,255,255))
     while run:
-        clk.tick(60)
         for event in pygame.event.get():
-            if event.type==pygame.QUIT:
-                run=False
+            if event.type == pygame.QUIT:
+                run = False
 
-        base.move()
-        #bird.move()
-        add_pipe=False
-        rem=[]
-        for pipe in pipes:
-            if pipe.collide(bird):
-                pass
-            if pipe.x+pipe.PIPE_TOP.get_width()<0:
-                rem.append(pipe)
-            if not pipe.passed and pipe.x<bird.x:
-                pipe.passed=True
-                add_pipe=True
+            if event.type == pygame.KEYDOWN:
+                main()
 
-            pipe.move()
+        win.blit(text_label, (WIDTH/2 - text_label.get_width()/2, 500))
+        pygame.display.update()
 
-        if add_pipe:
-            score+=1
-            pipes.append(Pipe(700))
-
-        for r in rem:
-            pipes.remove(r)
-
-        if bird.y+bird.img.get_height()>=730:
-            pass
-
-        window(win,bird,pipes,base,score)
     pygame.quit()
     quit()
+
+def main():
+    bird = Bird(230,350)
+    base = Base(730)
+    pipes = [Pipe(600)]
+    score = 0
+
+    clock = pygame.time.Clock()
+    start = False
+    lost = False
+    win=pygame.display.set_mode((WIDTH,HEIGHT))
+    run = True
+    while run:
+        pygame.time.delay(30)
+        clock.tick(60)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+                pygame.quit()
+                quit()
+                break
+
+            if event.type == pygame.KEYDOWN and not lost:
+                if event.key == pygame.K_SPACE:
+                    if not start:
+                        start = True
+                    bird.jump()
+        if start:
+            bird.move()
+        if not lost:
+            base.move()
+
+            if start:
+                rem = []
+                add_pipe = False
+                for pipe in pipes:
+                    pipe.move()
+                    # check for collision
+                    if pipe.collide(bird):
+                        lost = True
+
+                    if pipe.x + pipe.PIPE_TOP.get_width() < 0:
+                        rem.append(pipe)
+
+                    if not pipe.passed and pipe.x < bird.x:
+                        pipe.passed = True
+                        add_pipe = True
+
+                if add_pipe:
+                    score += 1
+                    pipes.append(Pipe(600))
+
+                for r in rem:
+                    pipes.remove(r)
+
+
+        if bird.y + bird.img.get_height() - 10 >= 730:
+            break
+
+        window(win, bird, pipes, base, score)
+
+    end_screen(win)
 
 main()
 
