@@ -3,7 +3,7 @@ import neat
 import time
 import os
 import random
-WIDTH=600
+WIDTH=500
 HEIGHT=800
 BD_IMGS=[pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","bird1.png"))),pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","bird2.png"))),pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","bird3.png")))]
 BD_PIPE=pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","pipe.png")))
@@ -72,13 +72,16 @@ def window(win,bird):
 	win.blit(BD_BG,(0,0))
 	#win.blit(BD_BASE,(0,0))
 	bird.draw(win)
+	bird.move()
 	pygame.display.update()
 
 def main():
 	bird=Bird(200,200)
 	win=pygame.display.set_mode((WIDTH,HEIGHT))
+	clk=pygame.time.Clock()
 	run=True
 	while run:
+		clk.tick(30)
 		for event in pygame.event.get():
 			if event.type==pygame.QUIT:
 				run=False
