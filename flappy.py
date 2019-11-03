@@ -136,7 +136,8 @@ def window(win,bird,pipes,base):
 def main():
 	bird=Bird(230,350)
 	base=Base(730)
-	pipes=[Pipe(700)]
+	pipes=[Pipe(600)]
+	score=0
 
 	win=pygame.display.set_mode((WIDTH,HEIGHT))
 	clk=pygame.time.Clock()
@@ -148,10 +149,25 @@ def main():
 				run=False
 
 		base.move()
+		add_pipe=False
+		rem=[]
 		for pipe in pipes:
 			if pipe.collide(bird):
 				pass
+			if pipe.x+pipe.PIPE_TOP.get_width()<0:
+				rem.append(pipe)
+			if not pipe.passed and pipe.x<bird.x:
+				pipe.passed=True
+				add_pipe=True
+
 			pipe.move()
+
+		if add_pipe:
+			score+=1
+			pipes.append(Pipe(600))
+
+		for r in rem:
+			pipes.remove(r)
 
 			window(win,bird,pipes,base)
 	pygame.quit()
