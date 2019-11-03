@@ -3,13 +3,18 @@ import neat
 import time
 import os
 import random
+from pygame.locals import *
 pygame.font.init()
+pygame.mixer.init()
 WIDTH=500
 HEIGHT=800
 BD_IMGS=[pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","bird1.png"))),pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","bird2.png"))),pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","bird3.png")))]
 BD_PIPE=pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","pipe.png")))
 BD_BASE=pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","base.png")))
 BD_BG=pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","bg.png")))
+jump_sound = pygame.mixer.Sound('sounds/jump.ogg')
+score_sound = pygame.mixer.Sound('sounds/score.ogg')
+dead_sound = pygame.mixer.Sound('sounds/dead.ogg')
 
 STAT_FONT=pygame.font.SysFont("comicsans",50)
 
@@ -141,6 +146,7 @@ def window(win,bird,pipes,base,score):
 
 def end_screen(win):
     run = True
+    dead_sound.play()
     text_label = STAT_FONT.render("Press Space to Restart", 1, (255,255,255))
     while run:
         for event in pygame.event.get():
@@ -183,6 +189,7 @@ def main():
                     if not start:
                         start = True
                     bird.jump()
+                    jump_sound.play()
         if start:
             bird.move()
         if not lost:
@@ -206,6 +213,7 @@ def main():
 
                 if add_pipe:
                     score += 1
+                    score_sound.play()
                     pipes.append(Pipe(600))
 
                 for r in rem:
