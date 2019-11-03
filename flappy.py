@@ -3,12 +3,16 @@ import neat
 import time
 import os
 import random
+pygame.font.init()
 WIDTH=500
 HEIGHT=800
 BD_IMGS=[pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","bird1.png"))),pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","bird2.png"))),pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","bird3.png")))]
 BD_PIPE=pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","pipe.png")))
 BD_BASE=pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","base.png")))
 BD_BG=pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","bg.png")))
+
+STAT_FONT=pygame.font.SysFont("comicsans",50)
+
 class Bird:
 	IMGS=BD_IMGS
 	MAX_ROTATION=25
@@ -122,10 +126,12 @@ class Base:
 		win.blit(self.IMG,(self.x1,self.y))
 		win.blit(self.IMG,(self.x2,self.y))
 
-def window(win,bird,pipes,base):
+def window(win,bird,pipes,base,score):
 	win.blit(BD_BG,(0,0))
 	for pipe in pipes:
 		pipe.draw(win)
+	text=STAT_FONT.render("Score: ",+str(score),1,(255,255,255))
+	win.blit(text,(WIDTH-10-text.get_width(),10))
 	base.draw(win)
 	#win.blit(BD_BASE,(0,0))
 	bird.draw(win)
@@ -149,6 +155,7 @@ def main():
 				run=False
 
 		base.move()
+		#bird.move()
 		add_pipe=False
 		rem=[]
 		for pipe in pipes:
@@ -169,7 +176,10 @@ def main():
 		for r in rem:
 			pipes.remove(r)
 
-			window(win,bird,pipes,base)
+		if bird.y+bird.img.get_height()>=730:
+			pass
+
+			window(win,bird,pipes,base,score)
 	pygame.quit()
 	quit()
 
