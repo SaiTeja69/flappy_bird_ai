@@ -147,6 +147,12 @@ def main():
 			if event.type==pygame.QUIT:
 				run=False
 
+		base.move()
+		for pipe in pipes:
+			if pipe.collide(bird):
+				pass
+			pipe.move()
+
 			window(win,bird,pipes,base)
 	pygame.quit()
 	quit()
