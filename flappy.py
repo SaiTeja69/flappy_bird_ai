@@ -3,6 +3,7 @@ import neat
 import time
 import os
 import random
+pygame.mixer.init()
 pygame.font.init()
 WIDTH=500
 HEIGHT=800
@@ -10,7 +11,9 @@ BD_IMGS=[pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","bird1.p
 BD_PIPE=pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","pipe.png")))
 BD_BASE=pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","base.png")))
 BD_BG=pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","bg.png")))
-
+jump_sound = pygame.mixer.Sound('sounds/jump.ogg')
+score_sound = pygame.mixer.Sound('sounds/score.ogg')
+dead_sound = pygame.mixer.Sound('sounds/dead.ogg')
 STAT_FONT=pygame.font.SysFont("comicsans",50)
 
 class Bird:
@@ -172,6 +175,7 @@ def main(genomes,config):
 			break
 		for x,bird in enumerate(birds):
 			bird.move()
+			jump_sound.play()
 			ge[x].fitness+=0.1
 			output=nets[x].activate((bird.y,abs(bird.y-pipes[pipe_ind].height),abs(bird.y-pipes[pipe_ind].bottom)))
 			if output[0]>0.5:
@@ -184,6 +188,7 @@ def main(genomes,config):
 				if pipe.collide(bird):
 					ge[x].fitness-=1
 					birds.pop(x)
+					dead_sound.play()
 					nets.pop(x)
 					ge.pop(x)
 
@@ -197,6 +202,7 @@ def main(genomes,config):
 
 		if add_pipe:
 			score+=1
+			score_sound.play()
 			pipes.append(Pipe(600))
 			for g in ge:
 				g.fitness+=5
